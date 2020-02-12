@@ -4,4 +4,5 @@
     <string name="subtotalInputField">0.00</string>
     <string name="totalField">0.00</string>
     <string name="discountPercentageInputField">0</string>
+    <string name="discountTotalViewField">0.00</string>
 </resources>
