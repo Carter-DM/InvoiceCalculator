@@ -14,17 +14,21 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.text.NumberFormat;
 
-public class MainActivity extends AppCompatActivity implements TextView.OnEditorActionListener {
+public class MainActivity extends AppCompatActivity {
 
     private EditText subtotalEditText;
-    private EditText discountPercentageEditText;
-    private TextView discountTotalViewField;
-    private TextView totalViewField;
+    private TextView tipPercentageTextView;
+    private SeekBar tipPercentageSeekBar;
+    private Button tipPercentageApplyButton;
+    private TextView tipTotalTextView;
+    private TextView totalTextView;
 
     private SharedPreferences savedValues;
 
@@ -44,19 +48,49 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
             }
         });
 
-        subtotalEditText = (EditText) findViewById(R.id.subtotalEditText);
-        discountPercentageEditText = (EditText) findViewById(R.id.discountPercentEditText);
-        discountTotalViewField = (TextView) findViewById(R.id.discountTotalTextView);
-        totalViewField = (TextView) findViewById(R.id.totalTextView);
+        subtotalEditText = findViewById(R.id.subtotalEditText);
+        tipPercentageTextView = findViewById(R.id.tipPercentTextView);
+        tipPercentageSeekBar = findViewById(R.id.tipPercentageSeekBar);
+        tipPercentageApplyButton = findViewById(R.id.tipPercentageApplyButton);
+        tipTotalTextView = findViewById(R.id.tipTotalTextView);
+        totalTextView = findViewById(R.id.totalTextView);
 
-        subtotalEditText.setOnEditorActionListener(this);
-        discountPercentageEditText.setOnEditorActionListener(this);
-    }
+        /*
+        ============================================================================================
+        ======================================== LISTENERS =========================================
+        ============================================================================================
+         */
 
-    @Override
-    protected void onResume() {
-        calculateAndDisplay();
-        super.onResume();
+        subtotalEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    calculateAndDisplay();
+                }
+                return false;
+            }
+        });
+
+        tipPercentageSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                displayTipPercentage(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+
+        tipPercentageApplyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calculateAndDisplay();
+            }
+        });
+
     }
 
     @Override
@@ -82,7 +116,14 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
     }
 
     /**
-     * Calculate and Display the discount and total values.
+     * Display percentage value based on seekbar progress.
+     */
+    public void displayTipPercentage(int progress) {
+        tipPercentageTextView.setText((progress * 5) + "%");
+    }
+
+    /**
+     * Calculate and Display the tip and total values.
      */
     public void calculateAndDisplay(){
         // Getting subtotal amount field value
@@ -95,31 +136,17 @@ public class MainActivity extends AppCompatActivity implements TextView.OnEditor
             subtotalAmount = Float.parseFloat(subtotalAmountString);
         }
 
-        // Getting discount percentage field total
-        String discountPercentageString = discountPercentageEditText.getText().toString();
-        float discountPercentage;
-        if (discountPercentageString.equals("")) {
-            discountPercentage = 0;
-        }
-        else {
-            discountPercentage = Float.parseFloat(discountPercentageString);
-        }
+        // Getting tip percentage field total
+        String tipPercentageString = tipPercentageTextView.getText().toString().replace("%", "");
+        float tipPercentage = Float.parseFloat(tipPercentageString);
 
         // Calculate tip and total
-        float discount = subtotalAmount * (discountPercentage / 100);
-        float total = subtotalAmount - discount;
+        float tip = subtotalAmount * (tipPercentage / 100);
+        float total = subtotalAmount + tip;
 
         // Display values
         NumberFormat currency = NumberFormat.getCurrencyInstance();
-        discountTotalViewField.setText(currency.format(discount));
-        totalViewField.setText(currency.format(total));
-    }
-
-    @Override
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if (actionId == EditorInfo.IME_ACTION_DONE) {
-            calculateAndDisplay();
-        }
-        return false;
+        tipTotalTextView.setText(currency.format(tip));
+        totalTextView.setText(currency.format(total));
     }
 }
