@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tipTotalTextView;
     private TextView totalTextView;
 
-    private SharedPreferences savedValues;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +49,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        sharedPreferences = getSharedPreferences("TipCalculatorSharedPreferences", MODE_PRIVATE);
+
         subtotalEditText = findViewById(R.id.subtotalEditText);
         tipPercentageTextView = findViewById(R.id.tipPercentTextView);
         tipPercentageSeekBar = findViewById(R.id.tipPercentageSeekBar);
         tipPercentageApplyButton = findViewById(R.id.tipPercentageApplyButton);
         tipTotalTextView = findViewById(R.id.tipTotalTextView);
         totalTextView = findViewById(R.id.totalTextView);
+
+        tipPercentageTextView.setText(sharedPreferences.getString("defaultTip", "15") + "%");
+        tipPercentageSeekBar.setProgress(Integer.parseInt(sharedPreferences.getString("defaultTip", "15")));
+        tipPercentageSeekBar.setMax(Integer.parseInt(sharedPreferences.getString("maxTip", "100")));
 
         /*
         ============================================================================================
@@ -122,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
      * Display percentage value based on seekbar progress.
      */
     public void displayTipPercentage(int progress) {
-        tipPercentageTextView.setText((progress * 5) + "%");
+        tipPercentageTextView.setText((progress) + "%");
     }
 
     /**

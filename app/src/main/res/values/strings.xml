@@ -5,4 +5,11 @@
     <string name="totalField">0.00</string>
     <string name="tipPercentageInputField">0%</string>
     <string name="tipTotalViewField">0.00</string>
+    <string name="settingsDefaultTipTextView">Default Tip %:</string>
+    <string name="settingsMinTipTextView">Minimum Tip %:</string>
+    <string name="settingsMaxTipTextView">Maximum Tip %:</string>
+    <string name="settingsDefaultTipsHeaderTextView">Tip Defaults</string>
+    <string name="settingsSaveButton">Save</string>
+    <string name="settingsDefaultTipEditText">15</string>
+    <string name="settingsMaximumTipEditText">100</string>
 </resources>
